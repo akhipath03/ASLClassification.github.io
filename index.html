@@ -1,0 +1,1408 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Writeup</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  </head>
+
+  <body class="stackedit">
+    <div class="stackedit__html">
+      <h1 id="asl-classification-using-neural-networks">
+        ASL Classification Using Neural Networks
+      </h1>
+      <h2 id="abstract">Abstract</h2>
+      <p>
+        In this research, we dive into the realm of American Sign Language (ASL)
+        classification using neural networks. The primary objective is to
+        develop machine learning models capable of recognizing and classifying
+        ASL alphabets, thereby enhancing accessibility and inclusivity for the
+        hearing-impaired community. We employ various neural network
+        architectures, including Deep Neural Networks (DNNs), Convolutional
+        Neural Networks (CNNs), AlexNet, and ResNet34, each with its unique
+        strengths and characteristics. The models are trained and evaluated
+        using a curated ASL alphabet dataset obtained from Kaggle. Additionally,
+        all models are tested in a real-time application scenario to assess
+        their practical performance. Through comprehensive experimentation and
+        analysis, we aim to identify the most suitable model for real-time ASL
+        alphabet recognition applications.
+      </p>
+      <h2 id="introduction">Introduction</h2>
+      <h3 id="background">Background</h3>
+      <p>
+        American Sign Language (ASL) serves as a crucial mode of communication
+        for individuals with hearing impairments. However, the lack of efficient
+        and accurate ASL recognition systems impedes effective communication for
+        this community. To address this challenge, researchers have increasingly
+        turned to machine learning and neural network techniques to develop
+        robust ASL recognition models. These models have the potential to
+        revolutionize communication for the hearing-impaired by providing
+        real-time interpretation of sign language gestures.
+      </p>
+      <h3 id="research-objective">Research Objective</h3>
+      <p>
+        The primary objective of this project is to develop and evaluate neural
+        network models capable of accurately recognizing and classifying ASL
+        alphabets. By utilizing machine learning techniques, we aim to
+        facilitate uninterrupted communication for the hearing-impaired
+        community and enhance accessibility in various domains.
+      </p>
+      <h3 id="significance">Significance</h3>
+      <ul>
+        <li>
+          <strong>Enhanced Accessibility</strong>: ASL recognition models have
+          the potential to enhance accessibility for individuals with hearing
+          impairments by providing a means of real-time communication through
+          visual gestures.
+        </li>
+        <li>
+          <strong>Educational Tools</strong>: Additionally, these models can
+          serve as valuable educational tools to assist in learning and
+          practicing sign language, thereby promoting inclusivity and
+          understanding.
+        </li>
+      </ul>
+      <h2 id="description-of-data">Description of Data</h2>
+      <h4 id="about-the-dataset">About the Dataset</h4>
+      <p>
+        The dataset is a curated collection of images depicting letters of the
+        alphabet from the American Sign Language, organized into 29 distinct
+        folders representing the various classes.
+      </p>
+      <h4 id="content">Content</h4>
+      <ul>
+        <li>
+          <p>
+            <strong>Training Dataset</strong>: The training dataset comprises
+            87,000 images, each with dimensions of 200x200 pixels. It
+            encompasses 29 classes, with 26 classes corresponding to the letters
+            A-Z and an additional 3 classes designated for SPACE, DELETE, and
+            NOTHING. These specialized classes significantly enhance the model’s
+            performance in real-time applications and classification tasks.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Test Dataset</strong>: The test dataset consists of a modest
+            set of 29 images. Therefore, the training dataset will be split into
+            three datasets. Training Dataset: 66,000, Validation Dataset: 7,000,
+            and the Testing Dataset: 14,000.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Random Sample of original images</strong><br />
+            `<img
+              class="center-block"
+              src="https://lh7-us.googleusercontent.com/yhfyIZhgaTaK3LSDanBa-CH5ADvdEKKSrbci8rJPvAVYlFuAoaWAq90jWR8b7plOE9qAkOhWlWsgwEVm_pgb7Yw_V-Y2NjwGhk0ZGXLPaleNPYi4pXHbzZaSp8_2bkETHlqeh3CO80tfgWSrNEM2JHng=s2048"
+              alt=""
+              width="900"
+            />
+          </p>
+        </li>
+      </ul>
+      <p>
+        For access to the dataset, you can visit
+        <a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet/data"
+          >this Kaggle link</a
+        >.
+      </p>
+      <h2 id="methods">Methods</h2>
+      <h3 id="pre-processing-methods">Pre-processing Methods</h3>
+      <p>
+        Before training the models, the dataset undergoes various preprocessing
+        steps to ensure compatibility with the neural network architectures and
+        enhance model performance. The preprocessing pipeline includes data
+        splitting and transformation steps tailored to each model’s
+        requirements. Additionally, we apply additional data augmentation
+        techniques to enhance model robustness and generalization.
+      </p>
+      <h4 id="data-splitting">Data Splitting</h4>
+      <p>
+        The dataset is split into training, validation, and test subsets. The
+        <code>random_split</code> function from PyTorch is used for this
+        purpose, with the following split sizes:
+      </p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python">val_size <span class="token operator">=</span> <span class="token number">7000</span>
+test_size <span class="token operator">=</span> <span class="token number">14000</span>
+train_size <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>dataset<span class="token punctuation">)</span> <span class="token operator">-</span> val_size <span class="token operator">-</span> test_size
+
+train_ds<span class="token punctuation">,</span> val_ds<span class="token punctuation">,</span> test_ds <span class="token operator">=</span> random_split<span class="token punctuation">(</span>dataset<span class="token punctuation">,</span> <span class="token punctuation">[</span>train_size<span class="token punctuation">,</span> val_size<span class="token punctuation">,</span> test_size<span class="token punctuation">]</span><span class="token punctuation">)</span>
+</code></pre>
+      <ul>
+        <li>
+          <strong>Purpose</strong>: Splitting the dataset into training,
+          validation, and test subsets allows for effective model training,
+          validation, and evaluation, respectively.
+        </li>
+        <li>
+          <strong>Reasoning</strong>: Training on a separate subset from
+          validation and testing helps assess model generalization and
+          performance on unseen data. Validation data aids in hyperparameter
+          tuning and model selection, while the test set evaluates the final
+          model’s performance.
+        </li>
+      </ul>
+      <h4 id="data-transformation-for-dnn-and-cnn">
+        Data Transformation for DNN and CNN:
+      </h4>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python">transform <span class="token operator">=</span> tt<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+	<span class="token punctuation">[</span> 
+		tt<span class="token punctuation">.</span>Resize<span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
+		tt<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
+		tt<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 
+	<span class="token punctuation">]</span><span class="token punctuation">)</span>
+</code></pre>
+      <p>
+        These transformations resize the images to 32x32 pixels, convert them to
+        tensors, and normalize the pixel values to the range [-1, 1].
+      </p>
+      <ul>
+        <li>
+          <strong>Reasoning</strong>:
+          <ul>
+            <li>
+              Resizing to a consistent size (32x32 pixels) ensures uniformity
+              and reduces computational complexity.
+            </li>
+            <li>
+              Converting images to tensors allows them to be processed
+              efficiently by the neural network.
+            </li>
+            <li>
+              Normalizing pixel values to the range [-1, 1] helps stabilize the
+              training process and improve convergence.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <h4 id="data-transformation-for-alexnet">
+        Data Transformation for AlexNet:
+      </h4>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python">transform <span class="token operator">=</span> transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+	<span class="token punctuation">[</span>
+		transforms<span class="token punctuation">.</span>RandomHorizontalFlip<span class="token punctuation">(</span>p<span class="token operator">=</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>RandomRotation<span class="token punctuation">(</span>degrees<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>RandomCrop<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">200</span><span class="token punctuation">,</span> <span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>Resize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">224</span><span class="token punctuation">,</span> <span class="token number">224</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
+	<span class="token punctuation">]</span><span class="token punctuation">)</span>
+</code></pre>
+      <p>
+        The transformations for AlexNet include random horizontal flipping,
+        rotation, cropping, resizing to 224x224 pixels, tensor conversion, and
+        normalization.
+      </p>
+      <ul>
+        <li>
+          <strong>Reasoning</strong>:
+          <ul>
+            <li>
+              Random horizontal flipping introduces variability and prevents
+              model overfitting by exposing it to flipped versions of images.
+            </li>
+            <li>
+              Random rotation simulates real-world variation in hand gestures,
+              making the model more resilient to orientation changes.
+            </li>
+            <li>
+              Random cropping focuses the model’s attention on relevant image
+              regions, improving feature learning.
+            </li>
+            <li>
+              Resizing to 224x224 pixels is a requirement of AlexNet
+              architecture.
+            </li>
+            <li>
+              Normalization ensures consistent input data distribution across
+              the training set.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <h4 id="data-transformation-for-resnet34">
+        Data Transformation for ResNet34:
+      </h4>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python">transform <span class="token operator">=</span> transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+	<span class="token punctuation">[</span>
+		transforms<span class="token punctuation">.</span>RandomHorizontalFlip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>RandomRotation<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>RandomResizedCrop<span class="token punctuation">(</span><span class="token number">224</span><span class="token punctuation">,</span> scale<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">0.8</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		transforms<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span>mean<span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">]</span><span class="token punctuation">,</span> std<span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
+	<span class="token punctuation">]</span><span class="token punctuation">)</span>
+</code></pre>
+      <p>
+        For ResNet34, the transformations involve random horizontal flipping,
+        rotation, random resized cropping, tensor conversion, and normalization.
+      </p>
+      <ul>
+        <li>
+          <strong>Reasoning</strong>:
+          <ul>
+            <li>
+              Random horizontal flipping and rotation enhance model robustness
+              and prevent overfitting.
+            </li>
+            <li>
+              Random resized cropping provides additional variation in image
+              composition, improving model generalization.
+            </li>
+            <li>
+              Resizing to 224x224 pixels is a requirement of ResNet34
+              architecture.
+            </li>
+            <li>
+              Normalization ensures standardized input data distribution, aiding
+              model convergence and stability.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <center>
+        `<img
+          class="center-block"
+          src="https://lh7-us.googleusercontent.com/3-0qxyyD2Awrn_B87gxGGlxfqvZKqiaCiHydUEl-fhSez0Uwss4AaZ7-NzTtyXwInR2TMCZogUgztLxrH9vxmuEIZF4b-cMuBzC6qGPYgOIat1YIxnN2HfLce1MOUW9XmCBdDsKjIUcFJIjMcEgH76EB=s2048"
+          alt=""
+          width="800"
+        />
+      </center>
+      <p>
+        By employing these preprocessing techniques tailored to each model’s
+        requirements, we aim to optimize model performance, robustness, and
+        generalization capabilities, ultimately improving the ASL alphabet
+        classification accuracy and usability in real-world scenarios.
+      </p>
+      <h3 id="analyticalmachine-learning-methods">
+        Analytical/Machine Learning Methods
+      </h3>
+      <h4 id="base-class-that-will-be-used-for-all-models">
+        Base Class That Will be Used For All Models
+      </h4>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ImageClassificationBase</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span>  <span class="token function">training_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> batch<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		images<span class="token punctuation">,</span> labels  <span class="token operator">=</span>  batch
+		out  <span class="token operator">=</span>  self<span class="token punctuation">(</span>images<span class="token punctuation">)</span> <span class="token comment"># Generate predictions</span>
+		loss  <span class="token operator">=</span>  F<span class="token punctuation">.</span>cross_entropy<span class="token punctuation">(</span>out<span class="token punctuation">,</span> labels<span class="token punctuation">)</span> <span class="token comment"># Calculate loss</span>
+		<span class="token keyword">return</span>  loss
+
+	<span class="token keyword">def</span>  <span class="token function">validation_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> batch<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		images<span class="token punctuation">,</span> labels  <span class="token operator">=</span>  batch
+		out  <span class="token operator">=</span>  self<span class="token punctuation">(</span>images<span class="token punctuation">)</span> <span class="token comment"># Generate predictions</span>
+		loss  <span class="token operator">=</span>  F<span class="token punctuation">.</span>cross_entropy<span class="token punctuation">(</span>out<span class="token punctuation">,</span> labels<span class="token punctuation">)</span> <span class="token comment"># Calculate loss</span>
+		acc  <span class="token operator">=</span>  accuracy<span class="token punctuation">(</span>out<span class="token punctuation">,</span> labels<span class="token punctuation">)</span> <span class="token comment"># Calculate accuracy</span>
+		<span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token string">"val_loss"</span><span class="token punctuation">:</span> loss<span class="token punctuation">.</span>detach<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"val_acc"</span><span class="token punctuation">:</span> acc<span class="token punctuation">}</span>
+
+	<span class="token keyword">def</span>  <span class="token function">validation_epoch_end</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> outputs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		batch_losses  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">[</span><span class="token string">"val_loss"</span><span class="token punctuation">]</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  outputs<span class="token punctuation">]</span>
+		epoch_loss  <span class="token operator">=</span>  torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>batch_losses<span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Combine losses</span>
+		batch_accs  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">[</span><span class="token string">"val_acc"</span><span class="token punctuation">]</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  outputs<span class="token punctuation">]</span>
+		epoch_acc  <span class="token operator">=</span>  torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>batch_accs<span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Combine accuracies</span>
+		<span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token string">"val_loss"</span><span class="token punctuation">:</span> epoch_loss<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"val_acc"</span><span class="token punctuation">:</span> epoch_acc<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span>
+
+	<span class="token keyword">def</span>  <span class="token function">epoch_end</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> epoch<span class="token punctuation">,</span> result<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Epoch [{}], val_loss: {:.4f}, val_acc: {:.4f}"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>epoch<span class="token punctuation">,</span> result<span class="token punctuation">[</span><span class="token string">"val_loss"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> result<span class="token punctuation">[</span><span class="token string">"val_acc"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+      <p>
+        The <code>ImageClassificationBase</code> class serves as a base class
+        for image classification models, providing common functionality and
+        methods that can be inherited by specific model implementations.<br />
+        Here’s what each method in the
+        <code>ImageClassificationBase</code> class does:
+      </p>
+      <ul>
+        <li>
+          <p>
+            <strong><code>training_step(batch)</code></strong
+            >: This method takes a batch of training data as input, generates
+            predictions using the model, calculates the loss using the
+            cross-entropy loss function, and returns the loss.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong><code>validation_step(batch)</code></strong
+            >: Similar to the <code>training_step</code>, this method takes a
+            batch of validation data as input, generates predictions using the
+            model, calculates both the loss and accuracy, and returns a
+            dictionary containing the validation loss and accuracy.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong><code>validation_epoch_end(outputs)</code></strong
+            >: This method takes a list of outputs from
+            <code>validation_step</code> for each batch in the validation
+            dataset. It combines the losses and accuracies from all batches,
+            calculates the mean loss and accuracy for the entire validation set,
+            and returns these aggregated values.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong><code>epoch_end(epoch, result)</code></strong
+            >: After each epoch of training or validation, this method is called
+            to print and display the validation loss and accuracy for that
+            epoch.
+          </p>
+        </li>
+      </ul>
+      <h4 id="models">Models:</h4>
+      <h4 id="deep-neural-network-dnn">Deep Neural Network (DNN)</h4>
+      <p>Python Implementation:</p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python">	<span class="token keyword">class</span>  <span class="token class-name">ASLDeepNeuralNetwork</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> input_size<span class="token punctuation">,</span> output_size<span class="token punctuation">)</span><span class="token punctuation">:</span>
+			<span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+			self<span class="token punctuation">.</span>network  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
+			nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>input_size<span class="token punctuation">,</span> <span class="token number">128</span><span class="token punctuation">)</span><span class="token punctuation">,</span> nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">128</span><span class="token punctuation">,</span> output_size<span class="token punctuation">)</span><span class="token punctuation">)</span>
+ 
+	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> xb<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span>  self<span class="token punctuation">.</span>network<span class="token punctuation">(</span>xb<span class="token punctuation">.</span>view<span class="token punctuation">(</span>xb<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+      <p>
+        DNN is a type of artificial neural network with multiple layers between
+        the input and output layers, allowing it to model complex patterns and
+        relationships in data.
+      </p>
+      <ul>
+        <li>
+          Architecture:
+          <ul>
+            <li>
+              Input Layer: 3 x 32 x 32
+              <ul>
+                <li>
+                  The input layer accepts RGB images with a resolution of 32x32
+                  pixels.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Hidden Layer 128 neurons:
+              <ul>
+                <li>
+                  ReLU activation function introduces non-linearity to the model
+                </li>
+              </ul>
+            </li>
+            <li>
+              Output 29 Neurons:
+              <ul>
+                <li>
+                  each corresponding to one of the ASL alphabet classes (A-Z,
+                  SPACE, DEL, and NOTHING)
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <img
+        class="center-block"
+        src="https://lh7-us.googleusercontent.com/5eDJggWwEC3qwD0t7_PKP78C7xwJIs1KnagUJ9vliSIHyv35w5n2StC4B3rU73TlUKojVj4dy4qHqJQNPEDVoP4Td1CZmO72NsFjobAKh03_mNe5NN5yP7J2fZF0V77qJ-8NFPxGgKiBBFjU8J9TC7Wz=s2048"
+        alt="dnn.drawio.png"
+        width="900"
+      />
+      <h4 id="convolutional-neural-network-cnn">
+        Convolutional Neural Network (CNN)
+      </h4>
+      <p>Python Implementation:</p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ASLModel</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>network  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">64</span><span class="token punctuation">,</span> <span class="token number">128</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment"># output: 128 x 16 x 16</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">128</span><span class="token punctuation">,</span> <span class="token number">128</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Dropout<span class="token punctuation">(</span><span class="token number">0.25</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">128</span><span class="token punctuation">,</span> <span class="token number">256</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment"># output: 256 x 8 x 8</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">256</span><span class="token punctuation">,</span> <span class="token number">512</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">512</span><span class="token punctuation">,</span> <span class="token number">512</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment"># output: 512 x 4 x 4</span>
+		nn<span class="token punctuation">.</span>Flatten<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">512</span>  <span class="token operator">*</span>  <span class="token number">4</span>  <span class="token operator">*</span>  <span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">1024</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">1024</span><span class="token punctuation">,</span> <span class="token number">512</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">512</span><span class="token punctuation">,</span> <span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		<span class="token punctuation">)</span> 
+
+	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> xb<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span>  self<span class="token punctuation">.</span>network<span class="token punctuation">(</span>xb<span class="token punctuation">)</span>
+</code></pre>
+      <p>
+        A CNN is a specialized type of deep neural network designed for images.
+        Convolutional layers automatically and adaptively learn spatial
+        hierarchies of features from the input data.
+      </p>
+      <ul>
+        <li>
+          Architecture:
+          <ul>
+            <li>
+              6 Convolutional Layers (ReLU):
+              <ul>
+                <li>Detect features in the input images.</li>
+              </ul>
+            </li>
+            <li>
+              3 Max Pooling Layers:
+              <ul>
+                <li>
+                  Downsample feature maps, reducing dimensionality and
+                  computational complexity.
+                  <ul>
+                    <li>Typically using 2x2 kernels with a stride of 2.</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>
+              Fully Connected Layers:
+              <ul>
+                <li>
+                  Perform classification based on the high-level features
+                  extracted by convolutional layers.
+                </li>
+                <li>
+                  Densely connected neurons, reducing to the final number of
+                  classes (29).
+                </li>
+              </ul>
+            </li>
+            <li>
+              Dropout:
+              <ul>
+                <li>
+                  Purpose: Regularization technique to prevent overfitting by
+                  randomly dropping neurons during training.
+                </li>
+                <li>
+                  Implementation: Applied after the convolutional a with a
+                  dropout rate typically set between 0.2 and 0.5.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <img
+        class="center-block"
+        src="https://lh7-us.googleusercontent.com/JxidTVEi133xupICsUxDIDU4AW-kXiSKGuYfQ2h3CY-8GZyUXKgeTrl8MSlvl6NbpxP2--axvsCqkGc_BJ-zNm1mSa_5unt6gzrKIOsA0Ao5e72Mn8wg74fqkSYR_Fc0UxxBdac6TcN1wjOxHpynY4nY=s2048"
+        alt="Cnn2.drawio.png"
+        width="900"
+      />
+      <h4 id="alexnet">AlexNet</h4>
+      <p>Python Implementation:</p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">AlexNet</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> num_classes<span class="token operator">=</span><span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>features  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">11</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span>kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">64</span><span class="token punctuation">,</span> <span class="token number">192</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span>kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">192</span><span class="token punctuation">,</span> <span class="token number">384</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">384</span><span class="token punctuation">,</span> <span class="token number">256</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">256</span><span class="token punctuation">,</span> <span class="token number">256</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span>kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		<span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>avgpool  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>AdaptiveAvgPool2d<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>classifier  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
+		nn<span class="token punctuation">.</span>Dropout<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">256</span>  <span class="token operator">*</span>  <span class="token number">6</span>  <span class="token operator">*</span>  <span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">4096</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Dropout<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">4096</span><span class="token punctuation">,</span> <span class="token number">4096</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+		nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">4096</span><span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span><span class="token punctuation">,</span>
+		<span class="token punctuation">)</span> 
+
+	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>features<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>avgpool<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  torch<span class="token punctuation">.</span>flatten<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>classifier<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		<span class="token keyword">return</span>  x
+</code></pre>
+      <p>
+        AlexNet is a seminal convolutional neural network (CNN) architecture
+        designed for image classification tasks. It won the ImageNet Large Scale
+        Visual Recognition Challenge (ILSVRC) in 2012, which significantly
+        advanced the field of deep learning.
+      </p>
+      <ul>
+        <li>
+          Architecture:
+          <ul>
+            <li>
+              5 Convolutional Layers with ReLU activation:
+              <ul>
+                <li>
+                  Each Conv2d layer applies a set of filters to the input image,
+                  convolving it to produce feature maps (highlights edges,
+                  textures, patterns, etc.).
+                </li>
+                <li>
+                  ReLU activation function introduces non-linearity, helping the
+                  model learn complex patterns in the data.
+                </li>
+              </ul>
+            </li>
+            <li>
+              3 Max Pooling Layers:
+              <ul>
+                <li>
+                  Same functionality as the CNN model; applied after the first,
+                  second, and fifth convolutional layers.
+                </li>
+                <li>
+                  Max pooling layers partition the input feature maps into
+                  non-overlapping rectangular regions and retain only the
+                  maximum value within each region.
+                </li>
+              </ul>
+            </li>
+            <li>
+              3 Fully Connected Layers:
+              <ul>
+                <li>
+                  First layer: 4096 neurons with ReLU activation and dropout.
+                </li>
+                <li>
+                  Second layer: 4096 neurons with ReLU activation and dropout.
+                </li>
+                <li>
+                  Output layer: Number of neurons equals the number of classes
+                  for classification (29).
+                </li>
+              </ul>
+            </li>
+            <li>
+              Dropout:
+              <ul>
+                <li>Prevents Overfitting</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        Unlike max pooling, which always selects the maximum value in each
+        pooling window, adaptive average pooling computes the average value
+        within each pooling window.
+      </p>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/eE3M5oVNOPpbeh1ZZ_me37dyqamOlFqGJxvZs7X4eDhSsOBqt_uXtz5niKp0WNxn3PTBCVT5o7Wtye5SLN1WEd4FQT1x9GBtxct33a5myk-rzW8aGsCiewW6Htq3NaJO2WwjkUrJW2QglzP5zaPYBYaF=s2048"
+          alt=""
+          width="900"
+        />
+      </center>
+      <h4 id="resnet34">ResNet34</h4>
+      <p>
+        ResNet, short for Residual Network, is a deep convolutional neural
+        network architecture that revolutionized image classification tasks.
+        ResNet addresses the vanishing gradient problem in very deep neural
+        networks by introducing skip connections or shortcuts that bypass one or
+        more layers. These skip connections enable the gradient to flow directly
+        through the network, allowing for the training of extremely deep
+        networks (up to hundreds of layers) without suffering from degradation
+        in performance.
+      </p>
+      <p>
+        Visual for skip connections:<br />
+        <img
+          src="https://lh7-us.googleusercontent.com/alYUFDNruN3AzJEh5RIpwCtLaIRHkFqzinuwcdseYLIDjcldcUyQlZRPmxZeW77IpzFruZz-Amj4TpgIoY_tmUamGviIaDe9xC6eTvb1pPFW9wLxgEITal5S1hEhcDTtTxjvaKH4qOhcq0JhoQC3QmO0=s2048"
+          alt=""
+          width="150"
+        />
+      </p>
+      <p>Python Implementation:</p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ResidualBlock</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> in_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> downsample<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token builtin">super</span><span class="token punctuation">(</span>ResidualBlock<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>conv1  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>
+		in_channels<span class="token punctuation">,</span>
+		out_channels<span class="token punctuation">,</span>
+		kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span>
+		stride<span class="token operator">=</span>stride<span class="token punctuation">,</span>
+		padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span>
+		bias<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span>
+		<span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>bn1  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>BatchNorm2d<span class="token punctuation">(</span>out_channels<span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>relu  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>conv2  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>
+		out_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> bias<span class="token operator">=</span><span class="token boolean">False</span>
+		<span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>bn2  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>BatchNorm2d<span class="token punctuation">(</span>out_channels<span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>downsample  <span class="token operator">=</span>  downsample
+
+	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		residual  <span class="token operator">=</span>  x
+		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>conv1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>bn1<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
+		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
+		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>conv2<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
+		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>bn2<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
+		<span class="token keyword">if</span>  self<span class="token punctuation">.</span>downsample<span class="token punctuation">:</span>
+		residual  <span class="token operator">=</span>  self<span class="token punctuation">.</span>downsample<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		out  <span class="token operator">+=</span>  residual
+		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
+		<span class="token keyword">return</span>  out
+</code></pre>
+      <p>
+        This class defines a single residual block in a ResNet architecture.
+        Residual blocks are central to ResNet’s success in training very deep
+        neural networks. Each residual block consists of two convolutional
+        layers with batch normalization and ReLU activation functions, along
+        with a shortcut connection that skips one or more layers.
+      </p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ResNet34</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> num_classes<span class="token operator">=</span><span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token builtin">super</span><span class="token punctuation">(</span>ResNet34<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>in_channels  <span class="token operator">=</span>  <span class="token number">64</span>
+		self<span class="token punctuation">.</span>conv1  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">7</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> bias<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>bn1  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>BatchNorm2d<span class="token punctuation">(</span><span class="token number">64</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>relu  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span>inplace<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>maxpool  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>MaxPool2d<span class="token punctuation">(</span>kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
+		<span class="token comment"># Residual layers</span>
+		self<span class="token punctuation">.</span>layer1  <span class="token operator">=</span>  self<span class="token punctuation">.</span>make_layer<span class="token punctuation">(</span>ResidualBlock<span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>layer2  <span class="token operator">=</span>  self<span class="token punctuation">.</span>make_layer<span class="token punctuation">(</span>ResidualBlock<span class="token punctuation">,</span> <span class="token number">128</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>layer3  <span class="token operator">=</span>  self<span class="token punctuation">.</span>make_layer<span class="token punctuation">(</span>ResidualBlock<span class="token punctuation">,</span> <span class="token number">256</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>layer4  <span class="token operator">=</span>  self<span class="token punctuation">.</span>make_layer<span class="token punctuation">(</span>ResidualBlock<span class="token punctuation">,</span> <span class="token number">512</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>avgpool  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>AdaptiveAvgPool2d<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>fc  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">512</span><span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span>
+
+	<span class="token keyword">def</span>  <span class="token function">make_layer</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> block<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> num_blocks<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		downsample  <span class="token operator">=</span>  <span class="token boolean">None</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>stride  <span class="token operator">!=</span>  <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">or</span> <span class="token punctuation">(</span>self<span class="token punctuation">.</span>in_channels  <span class="token operator">!=</span>  out_channels<span class="token punctuation">)</span><span class="token punctuation">:</span>
+			downsample  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
+				nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>
+					self<span class="token punctuation">.</span>in_channels<span class="token punctuation">,</span>
+					out_channels<span class="token punctuation">,</span>
+					kernel_size<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span>
+					stride<span class="token operator">=</span>stride<span class="token punctuation">,</span>
+					bias<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span>
+				<span class="token punctuation">)</span><span class="token punctuation">,</span>
+				nn<span class="token punctuation">.</span>BatchNorm2d<span class="token punctuation">(</span>out_channels<span class="token punctuation">)</span><span class="token punctuation">,</span>
+			<span class="token punctuation">)</span>
+		layers  <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+		layers<span class="token punctuation">.</span>append<span class="token punctuation">(</span>block<span class="token punctuation">(</span>self<span class="token punctuation">.</span>in_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> stride<span class="token punctuation">,</span> downsample<span class="token punctuation">)</span><span class="token punctuation">)</span>
+		self<span class="token punctuation">.</span>in_channels  <span class="token operator">=</span>  out_channels
+		<span class="token keyword">for</span>  _  <span class="token keyword">in</span>  <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> num_blocks<span class="token punctuation">)</span><span class="token punctuation">:</span>
+			layers<span class="token punctuation">.</span>append<span class="token punctuation">(</span>block<span class="token punctuation">(</span>out_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">)</span><span class="token punctuation">)</span>
+		<span class="token keyword">return</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span><span class="token operator">*</span>layers<span class="token punctuation">)</span>
+
+	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>conv1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>bn1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>maxpool<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>layer1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>layer2<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>layer3<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>layer4<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>avgpool<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  x<span class="token punctuation">.</span>view<span class="token punctuation">(</span>x<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>fc<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		<span class="token keyword">return</span>  x
+</code></pre>
+      <p>
+        This class defines the ResNet34 model, which is a specific instance of
+        the ResNet architecture with 34 layers. It consists of multiple residual
+        layers (<code>layer1</code> to <code>layer4</code>) and additional
+        layers for input processing and output prediction.
+      </p>
+      <ul>
+        <li>
+          Architecture
+          <ul>
+            <li>Input: 3-channel image (RGB); size 224x224 pixels</li>
+            <li>
+              Initial Convolutional/Processing Layer:
+              <ul>
+                <li>
+                  Convolution -&gt; Batch Normalization -&gt; ReLU Activation
+                  -&gt; Max Pooling
+                </li>
+              </ul>
+            </li>
+            <li>
+              Residual Stages (Layer 1 to Layer 4):
+              <ul>
+                <li>Multiple Residual Blocks in each stage</li>
+                <li>
+                  Skip Connections:
+                  <ul>
+                    <li>
+                      Inside each Residual Block, there’s a “skip” connection if
+                      the downsample parameter isn’t None.
+                    </li>
+                    <li>
+                      This connection merges the original input with the output
+                      of the main path (after the second convolutional layer),
+                      before applying ReLU activation.
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>Global Average Pooling</li>
+            <li>
+              Fully Connected Layer:
+              <ul>
+                <li>Input size: 512 (from the last convolutional layer)</li>
+                <li>Output size: Number of classes (29)</li>
+                <li>
+                  Output: Softmax activation applied to the output of the fully
+                  connected layer
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/96YEnUF5bocapdIWJomMH87YTZTtRzkdzOjHNqELSxY_jhXMX5uTdSvSAucj91rxQlMFMJaK6j9ogPQF0w8F4F7keBoC4_c6lc_dxaCqnUIMIv7h0hdBZh_pbgiieyjxvn15hiOKR0CphY_1SFm4OGSy=s2048"
+          alt=""
+          width="900"
+        />
+      </center>
+      <h3 id="application-and-validation-procedure">
+        Application and Validation Procedure
+      </h3>
+      <p>
+        The models are trained using the training dataset and evaluated using
+        the validation dataset. Training progress is monitored using metrics
+        such as loss and accuracy. Hyperparameters are tuned through grid search
+        to optimize model performance.
+      </p>
+      <p><strong>DNN, CNN, AlexNet, ResNet:</strong></p>
+      <h4 id="training-procedure">Training Procedure:</h4>
+      <ul>
+        <li>
+          <p><strong>Model Training:</strong></p>
+          <ul>
+            <li>
+              <strong>Optimizer:</strong> Adam optimizer is used for training,
+              as specified by <code>torch.optim.Adam</code>.
+            </li>
+            <li>
+              <strong>Learning Rate Schedule:</strong> The learning rate used is
+              0.0001 (<code>lr</code>). The learning rate remains constant
+              throughout training.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <h4 id="training-metrics">Training Metrics:</h4>
+      <ul>
+        <li>
+          <strong>Metrics Monitored:</strong> The primary metrics monitored
+          during training are training loss and validation loss.
+        </li>
+        <li>
+          <strong>Assessment of Model Performance:</strong> Both training loss
+          and validation loss are used to assess the model’s performance and
+          convergence. A decrease in training loss indicates that the model is
+          learning from the data. Validation loss helps monitor overfitting; if
+          it starts increasing while training loss decreases, it suggests the
+          model is overfitting.
+        </li>
+      </ul>
+      <h4 id="validation-procedure">Validation Procedure:</h4>
+      <h4 id="model-evaluation">Model Evaluation:</h4>
+      <ul>
+        <li>
+          <strong>Evaluation Metrics:</strong> Model performance is evaluated
+          using the validation dataset. The evaluation metrics used are
+          validation loss and validation accuracy.
+        </li>
+        <li>
+          <strong>Procedure:</strong> The <code>evaluate</code> function
+          calculates the validation loss and accuracy for the provided model
+          using the validation data loader (<code>val_dl</code>). It then
+          returns the average validation loss and accuracy over all batches in
+          the validation dataset.
+        </li>
+      </ul>
+      <h4 id="hyperparameter-tuning">Hyperparameter Tuning:</h4>
+      <ul>
+        <li>
+          <strong>Hyperparameters Considered:</strong> The primary
+          hyperparameters considered include the learning rate (<code>lr</code>)
+          and optimizer choice (<code>opt_func</code>). Additional
+          considerations for the specific models are mentioned below.
+        </li>
+        <li>
+          <strong>Tuning Method:</strong> Gridsearch was used to test multiple
+          different learning rates from 0.0001 to 0.01, the optimizer choice
+          tested both Adam and SGD. Specific hyperparameters varied for each
+          model.
+        </li>
+      </ul>
+      <h3 id="differences">Differences:</h3>
+      <p>
+        <strong>CNN:</strong> Extra Hyperparameter: Number of convolutional
+        layers (1 to 6)
+      </p>
+      <p>
+        Hyperparameters were kept to a minimum for both the AlexNet model and
+        the ResNet model to maintain strucutural similarity to the originals.
+      </p>
+      <h2 id="discussion-and-inferences">Discussion and Inferences</h2>
+      <h3 id="model-performance">Model Performance</h3>
+      <ul>
+        <li>
+          <strong>DNN</strong>:
+          <ul>
+            <li>
+              <p>
+                This model shows a consistent increase in accuracy and decrease
+                in Loss across epochs.
+              </p>
+            </li>
+            <li>
+              <p>
+                This model might have a higher accuracy if it was trained for
+                more epochs, however, this model is just used as the baseline,
+                so no further testing was done.
+              </p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/ySENbb07voA4F1ztRnazzOH51MfLUMGg4bhf-CcPs4tThqnHjVkBQ9YQQt8pm-kJYVD5rAAaSeBBHDiuqP3sbnhlJS6nKNgbPOmmhm7-PjPxqw2Oj_m30sVFVPiVrrYhkuCMw5a8x6Z15lSBol2xwRKL=s2048"
+          alt=""
+          width="450"
+        /><img
+          src="https://lh7-us.googleusercontent.com/yFIfad9BVETq68rD9zVaT1Q3d50MTNNnQAk_L8KvyuTPfYWd9alrdJpdoB3O5CU8Ci4bsu1B5TaTIYsQ3eoLiMqb5o25-A5jQ2sd5UIsFePdXWA5dNvVYqMB9fL4154ufG3kwFcUi0gGTiD8Ner92ajB=s2048"
+          alt=""
+          width="450"
+        />
+      </center>
+      <ul>
+        <li>
+          <strong>CNN</strong>:
+          <ul>
+            <li>
+              <p>
+                Overall, the model shows a consistent improvement in validation
+                accuracy across epochs with decreasing validation loss.
+              </p>
+            </li>
+            <li>
+              <p>
+                There seems to be no increase in accuracy after epoch 6,
+                therefore, implementing early stopping could be beneficial.
+              </p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/uY6vZDtlTXPp6zkgYBCHfgBEFSmGqRNi6LAsRqv5yeymYMjhGDg6wEpKhr04otEr-P8vTTqST06_bi9zMTgGwDvsgx0hUBPY7H-IhoMC5khAG86-XD8dq5MAkzOLupjjswWQMCI7pVD0fbG549mBbJll=s2048"
+          alt=""
+          width="450"
+        /><img
+          src="https://lh7-us.googleusercontent.com/hRXOLabdlvqNOYD6Q-cAAf5ub_-eVdcyKoFT4cSH6kCkfX6KafnQ28_OXTou99hNgGEe1psa0umRYh99E-2oeu2mgpWOD0wW-wzR61xjhisx2qi630xwtTgw5A0vtHPuyYiUbKHp2p2fNOngwXsvEW-X=s2048"
+          alt=""
+          width="450"
+        />
+      </center>
+      <ul>
+        <li>
+          <strong>AlexNet</strong>:
+          <ul>
+            <li>
+              The validation loss decreases steadily and the validation accuracy
+              increases steadily over epochs, indicating that the model is
+              learning and improving its performance (99.57% accuracy).
+            </li>
+            <li>
+              The training time per epoch ~ 1 hour
+              <ul>
+                <li>Adjusting batch size might cut down on training time.</li>
+              </ul>
+            </li>
+            <li>
+              The validation loss seems to plateau or even slightly increase
+              after epoch 6, while the accuracy continues to increase.
+              <ul>
+                <li>
+                  This could indicate overfitting, and implementing techniques
+                  like early stopping based on validation loss could prevent
+                  overfitting and potentially improve generalization
+                  performance.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/doMWKRNPPYWdoXk4_XMu5yEm_7s8AFn0y16GYPP3nZBChc05NVNUMZfHb6gr2wsVjZ2RS-lmesdaZsxNZQ126jXsYTu8jXESW8Y-zjL0CebNx32gd3lMcsy-AUfPktOEVfOf3_uSek5245CxFql3rVSX=s2048"
+          alt=""
+          width="450"
+        /><img
+          src="https://lh7-us.googleusercontent.com/bgIswGcHXjojyz9_Dz2xPUgbu04Yd3puCObaHNP0NhwiY6s7b1F3zXRvzsrTV5nV0V_xiDusfAWfcH1dL4CSXceRkqFMNT4MfWTiS3UxedkrhBjMT18TPwfGUTsQR044boTYU4UFPBAOhbNTooibEciH=s2048"
+          alt=""
+          width="450"
+        />
+      </center>
+      <ul>
+        <li>
+          <strong>ResNet34</strong>:
+          <ul>
+            <li>
+              The validation loss decreases initially, indicating learning
+              progress, but there’s a slight increase in loss during later
+              epochs, suggesting potential overfitting or convergence issues.
+            </li>
+            <li>
+              The significant gap between training and validation loss/accuracy
+              towards the later epochs could indicate overfitting. Implementing
+              techniques like early stopping, regularization (e.g., dropout,
+              weight decay (L2 Regularization)), or more data augmentation may
+              help mitigate overfitting.
+            </li>
+            <li>
+              Considering the lengthy training time per epoch (over 2.5 hours),
+              optimizing the training process could be beneficial. Techniques
+              like adjusting batch size and utilizing hardware accelerators
+              could help speed up training.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/uDCQBWxOm3zrXckN0RKyqOpTutz_GcZTPTKFp4SmawLorBTLImMZKAdI4CnVqTSN5u-qMzP64pMlGKueqtZALV4wIGF_4v9hfxUXHEmvGxO98KrCUPchAP8FcQepy1K-RI12_EpNP_unLEvZn2tqpsLE=s2048"
+          alt=""
+          width="450"
+        /><img
+          src="https://lh7-us.googleusercontent.com/9jMyV0Q0J2B2quytuW5DAWLr0O9XoKJbJ6lY80afrgD1D8k4h-4hfI3lW7NWiFdFHA_td_tRHV7SJebRsojFKeUiL3TmV6Q1XeSax_8dZHbQvosy3pjMoTlthamtujQw4DCvnkBSPkrcpQlOVCGAq2IY=s2048"
+          alt=""
+          width="450"
+        />
+      </center>
+      <h3 id="performance-comparison">Performance Comparison</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>DNN (Deep Neural Network)</th>
+            <th>CNN (Convolutional Neural Network)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pros:</strong></td>
+            <td><strong>Pros:</strong></td>
+          </tr>
+          <tr>
+            <td>
+              - Relatively fast training time per epoch compared to the CNN,
+              AlexNet, and ResNet models.
+            </td>
+            <td>
+              - Achieves high validation accuracy and low validation loss.
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              - Utilizes convolutional layers designed to capture spatial
+              dependencies in image data effectively.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Cons:</strong></td>
+            <td><strong>Cons:</strong></td>
+          </tr>
+          <tr>
+            <td>
+              - Achieves lower validation accuracy compared to the CNN, AlexNet,
+              and ResNet models, indicating potential limitations in capturing
+              complex patterns in the data.
+            </td>
+            <td>- Longer training time per epoch compared to the DNN model.</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              - May require more computational resources due to the complexity
+              of convolutional operations.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>AlexNet</strong></td>
+            <td><strong>ResNet34</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Pros:</strong></td>
+            <td><strong>Pros:</strong></td>
+          </tr>
+          <tr>
+            <td>
+              - Achieves the highest validation accuracy among the models.
+            </td>
+            <td>
+              - Provides competitive validation accuracy and loss compared to
+              the other models.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              - Utilizes a relatively simple architecture compared to ResNet,
+              making it easier to train and deploy.
+            </td>
+            <td>
+              - Utilizes skip connections to address the vanishing gradient
+              problem.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Cons:</strong></td>
+            <td><strong>Cons:</strong></td>
+          </tr>
+          <tr>
+            <td>
+              - Longer training time per epoch compared to the DNN and CNN
+              model.
+            </td>
+            <td>- Much longer training time per epoch.</td>
+          </tr>
+          <tr>
+            <td>
+              - May not capture complex patterns as effectively as deeper
+              architectures like ResNet.
+            </td>
+            <td>- Requires many more computational resources.</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>- Overfitting problem in the later epochs.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="implementing-real-time-predictions">
+        Implementing Real-Time Predictions
+      </h2>
+      <p>
+        Real-time predictions are a crucial aspect of any practical application
+        involving machine learning models, especially for tasks like American
+        Sign Language (ASL) recognition, where timely responses are essential
+        for effective communication. In this section, we discuss the methodology
+        and implementation details for achieving real-time predictions using a
+        pre-trained deep learning model for ASL recognition.
+      </p>
+      <p>Python Implementation:</p>
+      <pre
+        class="language-python"
+      ><code class="prism  language-python"><span class="token comment"># Model Structures Above</span>
+<span class="token keyword">def</span>  <span class="token function">choose_model</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Choose a model type:"</span><span class="token punctuation">)</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"1. CNN"</span><span class="token punctuation">)</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"2. DNN"</span><span class="token punctuation">)</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"3. AlexNet"</span><span class="token punctuation">)</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"4. ResNet34"</span><span class="token punctuation">)</span>
+	choice_type  <span class="token operator">=</span>  <span class="token builtin">int</span><span class="token punctuation">(</span><span class="token builtin">input</span><span class="token punctuation">(</span><span class="token string">"Enter your choice (1/2/3/4): "</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	model_types  <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">:</span> <span class="token string">"CNN"</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">:</span> <span class="token string">"DNN"</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">:</span> <span class="token string">"AlexNet"</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">:</span> <span class="token string">"ResNet34"</span><span class="token punctuation">}</span>
+	model_type  <span class="token operator">=</span>  model_types<span class="token punctuation">.</span>get<span class="token punctuation">(</span>choice_type<span class="token punctuation">,</span> <span class="token string">"CNN"</span><span class="token punctuation">)</span>
+	model_file  <span class="token operator">=</span>  f<span class="token string">"{model_type}.pth"</span>
+	<span class="token keyword">if</span>  <span class="token operator">not</span>  os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>exists<span class="token punctuation">(</span>model_file<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">"Error: {model_file} does not exist."</span><span class="token punctuation">)</span>
+		<span class="token keyword">return</span>  <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token boolean">None</span>
+	<span class="token keyword">return</span>  model_file<span class="token punctuation">,</span> model_type
+
+<span class="token keyword">def</span>  <span class="token function">choose_transforms</span><span class="token punctuation">(</span>model_type<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">if</span>  model_type  <span class="token operator">==</span>  <span class="token string">"AlexNet"</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span>  transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+			<span class="token punctuation">[</span>
+				transforms<span class="token punctuation">.</span>RandomHorizontalFlip<span class="token punctuation">(</span>p<span class="token operator">=</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>RandomRotation<span class="token punctuation">(</span>degrees<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>RandomCrop<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">200</span><span class="token punctuation">,</span> <span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>Resize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">224</span><span class="token punctuation">,</span> <span class="token number">224</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+			<span class="token punctuation">]</span>
+		<span class="token punctuation">)</span>
+	<span class="token keyword">if</span>  model_type  <span class="token operator">==</span>  <span class="token string">"ResNet34"</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span>  transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+			<span class="token punctuation">[</span>
+				transforms<span class="token punctuation">.</span>RandomHorizontalFlip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>RandomRotation<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>RandomResizedCrop<span class="token punctuation">(</span><span class="token number">224</span><span class="token punctuation">,</span> scale<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">0.8</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span>mean<span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">]</span><span class="token punctuation">,</span> std<span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+			<span class="token punctuation">]</span>
+		<span class="token punctuation">)</span>
+	<span class="token keyword">else</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span>  transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+			<span class="token punctuation">[</span>
+				transforms<span class="token punctuation">.</span>Resize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">,</span> <span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				transforms<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+			<span class="token punctuation">]</span>
+		<span class="token punctuation">)</span>  
+		
+<span class="token comment"># Load the model</span>
+model_file<span class="token punctuation">,</span> model_type  <span class="token operator">=</span>  choose_model<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span>  model_file  <span class="token operator">and</span>  model_type<span class="token punctuation">:</span>
+	model_cls  <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"CNN"</span><span class="token punctuation">:</span> CNN<span class="token punctuation">,</span> <span class="token string">"DNN"</span><span class="token punctuation">:</span> DNN<span class="token punctuation">,</span> <span class="token string">"AlexNet"</span><span class="token punctuation">:</span> AlexNet<span class="token punctuation">,</span> <span class="token string">"ResNet34"</span><span class="token punctuation">:</span> ResNet34<span class="token punctuation">}</span><span class="token punctuation">[</span>model_type<span class="token punctuation">]</span> 
+	model  <span class="token operator">=</span>  model_cls<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	model<span class="token punctuation">.</span>load_state_dict<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>load<span class="token punctuation">(</span>m	odel_file<span class="token punctuation">,</span> map_location<span class="token operator">=</span>device<span class="token punctuation">)</span><span class="token punctuation">)</span>
+	model<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token punctuation">)</span>
+	model<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token comment"># Define the transform</span>
+	transform  <span class="token operator">=</span>  	choose_transforms<span class="token punctuation">(</span>model_type<span class="token punctuation">)</span>
+	<span class="token comment"># Initialize camera</span>
+	cap  <span class="token operator">=</span>  cv2<span class="token punctuation">.</span>VideoCapture<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+	<span class="token comment"># List of 29 possible classes</span>
+	alphabet  <span class="token operator">=</span> <span class="token punctuation">[</span>
+		<span class="token string">"A"</span><span class="token punctuation">,</span>
+		<span class="token string">"B"</span><span class="token punctuation">,</span>
+		<span class="token string">"C"</span><span class="token punctuation">,</span>
+		<span class="token string">"D"</span><span class="token punctuation">,</span>
+		<span class="token string">"del"</span><span class="token punctuation">,</span>
+		<span class="token string">"E"</span><span class="token punctuation">,</span>
+		<span class="token string">"F"</span><span class="token punctuation">,</span>
+		<span class="token string">"G"</span><span class="token punctuation">,</span>
+		<span class="token string">"H"</span><span class="token punctuation">,</span>
+		<span class="token string">"I"</span><span class="token punctuation">,</span>
+		<span class="token string">"J"</span><span class="token punctuation">,</span>
+		<span class="token string">"K"</span><span class="token punctuation">,</span>
+		<span class="token string">"L"</span><span class="token punctuation">,</span>
+		<span class="token string">"M"</span><span class="token punctuation">,</span>
+		<span class="token string">"N"</span><span class="token punctuation">,</span>
+		<span class="token string">"nothing"</span><span class="token punctuation">,</span>
+		<span class="token string">"O"</span><span class="token punctuation">,</span>
+		<span class="token string">"P"</span><span class="token punctuation">,</span>
+		<span class="token string">"Q"</span><span class="token punctuation">,</span>
+		<span class="token string">"R"</span><span class="token punctuation">,</span>
+		<span class="token string">"S"</span><span class="token punctuation">,</span>
+		<span class="token string">"space"</span><span class="token punctuation">,</span>
+		<span class="token string">"T"</span><span class="token punctuation">,</span>
+		<span class="token string">"U"</span><span class="token punctuation">,</span>
+		<span class="token string">"V"</span><span class="token punctuation">,</span>
+		<span class="token string">"W"</span><span class="token punctuation">,</span>
+		<span class="token string">"X"</span><span class="token punctuation">,</span>
+		<span class="token string">"Y"</span><span class="token punctuation">,</span>
+		<span class="token string">"Z"</span><span class="token punctuation">,</span>
+	<span class="token punctuation">]</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span>model_type<span class="token punctuation">,</span> model_file<span class="token punctuation">)</span>
+
+	<span class="token keyword">while</span>  <span class="token boolean">True</span><span class="token punctuation">:</span>
+		ret<span class="token punctuation">,</span> frame  <span class="token operator">=</span>  cap<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token comment"># Convert numpy array to PIL image</span>
+		pil_image  <span class="token operator">=</span>  Image<span class="token punctuation">.</span>fromarray<span class="token punctuation">(</span>frame<span class="token punctuation">)</span>
+		<span class="token comment"># Apply the transform</span>
+		input_tensor  <span class="token operator">=</span>  transform<span class="token punctuation">(</span>pil_image<span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token punctuation">)</span>
+		<span class="token comment"># Make prediction</span>
+		<span class="token keyword">with</span>  torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+			outputs  <span class="token operator">=</span>  model<span class="token punctuation">(</span>input_tensor<span class="token punctuation">)</span>
+			_<span class="token punctuation">,</span> predicted  <span class="token operator">=</span>  torch<span class="token punctuation">.</span><span class="token builtin">max</span><span class="token punctuation">(</span>outputs<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+		<span class="token comment"># Get the predicted letter</span>
+		predicted_letter  <span class="token operator">=</span>  alphabet<span class="token punctuation">[</span>predicted<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+		<span class="token comment"># Display the prediction on the frame</span>
+		cv2<span class="token punctuation">.</span>putText<span class="token punctuation">(</span>
+			frame<span class="token punctuation">,</span>
+			predicted_letter<span class="token punctuation">,</span>
+			<span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">,</span> <span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+			cv2<span class="token punctuation">.</span>FONT_HERSHEY_SIMPLEX<span class="token punctuation">,</span>
+			<span class="token number">2</span><span class="token punctuation">,</span>
+			<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+			<span class="token number">2</span><span class="token punctuation">,</span>
+		<span class="token punctuation">)</span> 
+		<span class="token comment"># Display the frame</span>
+		cv2<span class="token punctuation">.</span>imshow<span class="token punctuation">(</span><span class="token string">"ASL Prediction"</span><span class="token punctuation">,</span> frame<span class="token punctuation">)</span>
+		<span class="token comment"># Break the loop if 'q' is pressed</span>
+		<span class="token keyword">if</span>  cv2<span class="token punctuation">.</span>waitKey<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>  <span class="token number">0xFF</span>  <span class="token operator">==</span>  <span class="token builtin">ord</span><span class="token punctuation">(</span><span class="token string">"q"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+			<span class="token keyword">break</span>
+	<span class="token comment"># Release the camera and close all OpenCV windows</span>
+	cap<span class="token punctuation">.</span>release<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	cv2<span class="token punctuation">.</span>destroyAllWindows<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+      <p>Flow Chart:</p>
+      <center>
+        <img
+          src="https://lh7-us.googleusercontent.com/BtjgX4fcCf17b9YsfaQOuuDPFpUImnuI5fhd5o3BZAbXyCsBMZHSQwMLqZo7jvgQJkWx3Ou7inAuPjhiGpTjDh11hc90QOUDtq1Eh8Y7ADl4OcdgDjkLx8GTDWAKtmM9RMnA30SHtL8Gxp81AJUetxxG=s2048"
+          alt=""
+          width="500"
+        />
+      </center>
+      <h4 id="model-selection-and-preparation">
+        Model Selection and Preparation
+      </h4>
+      <p>
+        The first step in implementing real-time predictions is selecting an
+        appropriate deep learning model. We consider four distinct models
+        tailored for image classification tasks: Convolutional Neural Network
+        (CNN), Deep Neural Network (DNN), AlexNet, and ResNet34. These models
+        offer varying degrees of complexity and performance, enabling us to
+        evaluate their suitability for real-time ASL recognition.
+      </p>
+      <p>
+        Once the model is chosen, we load its pre-trained weights from a saved
+        checkpoint file. This ensures that the model is initialized with learned
+        parameters, allowing us to make predictions immediately without the need
+        for further training.
+      </p>
+      <h4 id="input-data-processing">Input Data Processing</h4>
+      <p>
+        Before making predictions, input data, in this case, video frames
+        captured from a camera feed, undergoes preprocessing to conform to the
+        model’s input requirements. We employ image transformation techniques
+        such as resizing, normalization, and data augmentation to ensure
+        consistency.
+      </p>
+      <h4 id="real-time-prediction-loop">Real-time Prediction Loop</h4>
+      <p>
+        The main aspect of the real-time prediction system is a continuous loop
+        that captures video frames from the camera feed, processes them through
+        the selected model, and displays the predicted ASL letter overlaid on
+        the video frame. This loop operates at the frame rate of the camera
+        feed, ensuring that predictions are generated in real-time. An exception
+        to this rule is that the ResNet model is so complex, it slows the
+        framerate of the video capture down
+      </p>
+      <p>
+        Within the loop, each frame is converted into a format suitable for
+        input to the model (e.g., PIL image or tensor) and then fed into the
+        model to obtain predictions. The predicted ASL letter is then extracted
+        from the model’s output and displayed on the video frame using text
+        overlay.
+      </p>
+      <h4 id="user-interaction-and-termination">
+        User Interaction and Termination
+      </h4>
+      <p>
+        To provide a seamless user experience, the real-time prediction system
+        allows for user interaction through keyboard input. By pressing a
+        designated key (‘q’ in this case), the user can terminate the prediction
+        loop and exit the application. This functionality ensures that the
+        system is responsive to user commands and can be easily stopped when not
+        in use.
+      </p>
+      <h4 id="conclusion">Conclusion</h4>
+      <p>
+        After testing various deep learning models in real-world scenarios,
+        including Convolutional Neural Network (CNN), Deep Neural Network (DNN),
+        AlexNet, and ResNet34, we found that the AlexNet model consistently
+        delivered the most accurate results for real-time ASL recognition. By
+        leveraging the capabilities of AlexNet, we have successfully implemented
+        a robust and responsive system capable of providing real-time ASL letter
+        predictions. Through this research, we enhance accessibility and
+        inclusivity for the hearing-impaired community, facilitating effective
+        communication for individuals using sign language.
+      </p>
+      <h3 id="future-research-directions">Future Research Directions</h3>
+      <ul>
+        <li>
+          Exploration of advanced neural network architectures such as
+          Transformer-based models for ASL recognition.
+        </li>
+        <li>
+          Investigation into transfer learning and domain adaptation techniques
+          to improve model generalization.
+        </li>
+      </ul>
+      <h2 id="references">References</h2>
+      <p>
+        [1] ASL Alphabet Dataset from Kaggle. Available:
+        <a href="https://www.kaggle.com/datasets/grassknoted/asl-alphabet"
+          >Kaggle Dataset</a
+        >
+      </p>
+      <p>
+        [2] Thacker, Helik. “ASL Alphabet Image Classification Base Class.”
+        Jovian. Available:
+        <a href="https://jovian.ml/thackerhelik/asl#C51">Jovian ML</a>
+      </p>
+      <p>
+        [3] “Building a Convolutional Neural Network in PyTorch.” Machine
+        Learning Mastery. Available:
+        <a
+          href="https://machinelearningmastery.com/building-a-convolutional-neural-network-in-pytorch/"
+          >ML Mastery</a
+        >
+      </p>
+      <p>
+        [4] “AlexNet Implementation in PyTorch.” Paperspace Blog. Available:
+        <a href="https://blog.paperspace.com/alexnet-pytorch/">Paperspace</a>
+      </p>
+      <p>
+        [5] “ResNet Implementation in PyTorch.” Paperspace Blog. Available:
+        <a
+          href="https://blog.paperspace.com/writing-resnet-from-scratch-in-pytorch/"
+          >Paperspace</a
+        >
+      </p>
+      <p>
+        [6] “How to ResNet in PyTorch.” Medium. Available:
+        <a
+          href="https://medium.com/@karuneshu21/how-to-resnet-in-pytorch-9acb01f36cf5"
+          >Medium</a
+        >
+      </p>
+      <p>
+        [7] “Python OpenCV: Capture Video from Camera.” GeeksforGeeks.
+        Available:
+        <a
+          href="https://www.geeksforgeeks.org/python-opencv-capture-video-from-camera/#"
+          >GeeksforGeeks</a
+        >
+      </p>
+      <p>
+        [8] “PyTorch: Saving and Loading Models.” PyTorch Documentation.
+        Available:
+        <a
+          href="https://pytorch.org/tutorials/beginner/saving_loading_models.html"
+          >PyTorch</a
+        >
+      </p>
+    </div>
+  </body>
+</html>
