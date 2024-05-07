@@ -10,8 +10,11 @@
 
 <body class="stackedit">
   <div class="stackedit__html"><h1 id="asl-classification-using-neural-networks">ASL Classification Using Neural Networks</h1>
+<h5 id="akhilesh-pathange-2024">Akhilesh Pathange 2024</h5>
+<h5 id="college-of-william--mary">College of William &amp; Mary</h5>
 <h2 id="abstract">Abstract</h2>
-<p>In this research, we dive into the realm of American Sign Language (ASL) classification using neural networks. The primary objective is to develop machine learning models capable of recognizing and classifying ASL alphabets, thereby enhancing accessibility and inclusivity for the hearing-impaired community. We employ various neural network architectures, including Deep Neural Networks (DNNs), Convolutional Neural Networks (CNNs), AlexNet, and ResNet34, each with its unique strengths and characteristics. The models are trained and evaluated using a curated ASL alphabet dataset obtained from Kaggle.  After rigorous testing of our deep learning models in real-world scenarios, we have determined that the AlexNet model consistently achieves the highest accuracy in real-time ASL recognition. Leveraging the capabilities of AlexNet, we have successfully developed a robust and responsive system capable of providing instantaneous predictions of ASL letters in real-time.</p>
+<p><strong>Background:</strong> In this research, we dive into the realm of American Sign Language (ASL) classification using neural networks. The primary objective is to develop machine learning models capable of recognizing and classifying ASL alphabets, thereby enhancing accessibility and inclusivity for the hearing-impaired community. We employ various neural network architectures, including Deep Neural Networks (DNNs), Convolutional Neural Networks (CNNs), AlexNet, and ResNet34, each with its unique strengths and characteristics. The models are trained and evaluated using a curated ASL alphabet dataset obtained from Kaggle.<br>
+<strong>Results:</strong> After rigorous testing of our deep learning models in real-world scenarios, we have determined that the AlexNet model consistently achieves the highest accuracy in real-time ASL recognition. Leveraging the capabilities of AlexNet, we have successfully developed a robust and responsive system capable of providing instantaneous predictions of ASL letters in real-time.</p>
 <h2 id="introduction">Introduction</h2>
 <h3 id="background">Background</h3>
 <p>American Sign Language (ASL) serves as a crucial mode of communication for individuals with hearing impairments. However, the lack of efficient and accurate ASL recognition systems impedes effective communication for this community. To address this challenge, researchers have increasingly turned to machine learning and neural network techniques to develop robust ASL recognition models. These models have the potential to revolutionize communication for the hearing-impaired by providing real-time interpretation of sign language gestures.</p>
@@ -28,7 +31,7 @@
 <h4 id="content">Content</h4>
 <ul>
 <li>
-<p><strong>Training Dataset</strong>: The training dataset comprises 87,000 images, each with dimensions of 200x200 pixels. It encompasses 29 classes, with 26 classes corresponding to the letters A-Z and an additional 3 classes designated for SPACE, DELETE, and NOTHING. These specialized classes significantly enhance the model’s performance in real-time applications and classification tasks.</p>
+<p><strong>Training Dataset</strong>: The training dataset comprises 87,000 images, each with dimensions of 200x200 pixels. It encompasses 29 classes, with 26 classes corresponding to the letters A-Z and an additional 3 classes designated for SPACE, DELETE, and NOTHING.</p>
 </li>
 <li>
 <p><strong>Test Dataset</strong>: The test dataset consists of a modest set of 29 images. Therefore, the training dataset will be split into three datasets. Training Dataset: 66,000, Validation Dataset: 7,000, and the Testing Dataset: 14,000.</p>
@@ -118,33 +121,34 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 </ul>
 </li>
 </ul>
+<h4 id="summary">Summary:</h4>
 <center>
 `<img class="center-block" src="https://lh7-us.googleusercontent.com/3-0qxyyD2Awrn_B87gxGGlxfqvZKqiaCiHydUEl-fhSez0Uwss4AaZ7-NzTtyXwInR2TMCZogUgztLxrH9vxmuEIZF4b-cMuBzC6qGPYgOIat1YIxnN2HfLce1MOUW9XmCBdDsKjIUcFJIjMcEgH76EB=s2048" alt="" width="800">
 </center><p>By employing these preprocessing techniques tailored to each model’s requirements, we aim to optimize model performance, robustness, and generalization capabilities, ultimately improving the ASL alphabet classification accuracy and usability in real-world scenarios.</p>
 <h3 id="analyticalmachine-learning-methods">Analytical/Machine Learning Methods</h3>
-<h4 id="base-class-that-will-be-used-for-all-models">Base Class That Will be Used For All Models</h4>
-<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ImageClassificationBase</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	<span class="token keyword">def</span>  <span class="token function">training_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> batch<span class="token punctuation">)</span><span class="token punctuation">:</span>
+<h4 id="base-class-that-will-be-used-for-all-models">Base Class That Will be Used For All Models:</h4>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span> <span class="token class-name">ImageClassificationBase</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">training_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> batch<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		images<span class="token punctuation">,</span> labels  <span class="token operator">=</span>  batch
 		out  <span class="token operator">=</span>  self<span class="token punctuation">(</span>images<span class="token punctuation">)</span> <span class="token comment"># Generate predictions</span>
 		loss  <span class="token operator">=</span>  F<span class="token punctuation">.</span>cross_entropy<span class="token punctuation">(</span>out<span class="token punctuation">,</span> labels<span class="token punctuation">)</span> <span class="token comment"># Calculate loss</span>
 		<span class="token keyword">return</span>  loss
 
-	<span class="token keyword">def</span>  <span class="token function">validation_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> batch<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">validation_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> batch<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		images<span class="token punctuation">,</span> labels  <span class="token operator">=</span>  batch
 		out  <span class="token operator">=</span>  self<span class="token punctuation">(</span>images<span class="token punctuation">)</span> <span class="token comment"># Generate predictions</span>
 		loss  <span class="token operator">=</span>  F<span class="token punctuation">.</span>cross_entropy<span class="token punctuation">(</span>out<span class="token punctuation">,</span> labels<span class="token punctuation">)</span> <span class="token comment"># Calculate loss</span>
 		acc  <span class="token operator">=</span>  accuracy<span class="token punctuation">(</span>out<span class="token punctuation">,</span> labels<span class="token punctuation">)</span> <span class="token comment"># Calculate accuracy</span>
 		<span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token string">"val_loss"</span><span class="token punctuation">:</span> loss<span class="token punctuation">.</span>detach<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"val_acc"</span><span class="token punctuation">:</span> acc<span class="token punctuation">}</span>
 
-	<span class="token keyword">def</span>  <span class="token function">validation_epoch_end</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> outputs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">validation_epoch_end</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> outputs<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		batch_losses  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">[</span><span class="token string">"val_loss"</span><span class="token punctuation">]</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  outputs<span class="token punctuation">]</span>
 		epoch_loss  <span class="token operator">=</span>  torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>batch_losses<span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Combine losses</span>
 		batch_accs  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">[</span><span class="token string">"val_acc"</span><span class="token punctuation">]</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  outputs<span class="token punctuation">]</span>
 		epoch_acc  <span class="token operator">=</span>  torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>batch_accs<span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Combine accuracies</span>
 		<span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token string">"val_loss"</span><span class="token punctuation">:</span> epoch_loss<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"val_acc"</span><span class="token punctuation">:</span> epoch_acc<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span>
 
-	<span class="token keyword">def</span>  <span class="token function">epoch_end</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> epoch<span class="token punctuation">,</span> result<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">epoch_end</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> epoch<span class="token punctuation">,</span> result<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Epoch [{}], val_loss: {:.4f}, val_acc: {:.4f}"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>epoch<span class="token punctuation">,</span> \
 		result<span class="token punctuation">[</span><span class="token string">"val_loss"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> result<span class="token punctuation">[</span><span class="token string">"val_acc"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
@@ -168,17 +172,17 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <h4 id="deep-neural-network-dnn">Deep Neural Network (DNN)</h4>
 <p>DNN is a type of artificial neural network with multiple layers between the input and output layers, allowing it to model complex patterns and relationships in data.</p>
 <p>Python Implementation:</p>
-<pre class=" language-python"><code class="prism  language-python">	<span class="token keyword">class</span>  <span class="token class-name">ASLDeepNeuralNetwork</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
-		<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> input_size<span class="token punctuation">,</span> output_size<span class="token punctuation">)</span><span class="token punctuation">:</span>
+<pre class=" language-python"><code class="prism  language-python">	<span class="token keyword">class</span> <span class="token class-name">ASLDeepNeuralNetwork</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> input_size<span class="token punctuation">,</span> output_size<span class="token punctuation">)</span><span class="token punctuation">:</span>
 			<span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
 			self<span class="token punctuation">.</span>network  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
 			nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>input_size<span class="token punctuation">,</span> <span class="token number">128</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
 					  nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
 					  nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">128</span><span class="token punctuation">,</span> output_size<span class="token punctuation">)</span>
-					  <span class="token punctuation">)</span>
+			<span class="token punctuation">)</span>
  
-	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> xb<span class="token punctuation">)</span><span class="token punctuation">:</span>
-		<span class="token keyword">return</span>  self<span class="token punctuation">.</span>network<span class="token punctuation">(</span>xb<span class="token punctuation">.</span>view<span class="token punctuation">(</span>xb<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> xb<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>network<span class="token punctuation">(</span>xb<span class="token punctuation">.</span>view<span class="token punctuation">(</span>xb<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
 <ul>
 <li>Architecture:
@@ -205,8 +209,8 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <h4 id="convolutional-neural-network-cnn">Convolutional Neural Network (CNN)</h4>
 <p>A CNN is a specialized type of deep neural network designed for images. Convolutional layers automatically and adaptively learn spatial hierarchies of features from the input data.</p>
 <p>Python Implementation:</p>
-<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ASLModel</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span> <span class="token class-name">ASLModel</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		<span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>network  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
 			nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
@@ -233,8 +237,8 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 			nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">512</span><span class="token punctuation">,</span> <span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
 		<span class="token punctuation">)</span> 
 
-	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> xb<span class="token punctuation">)</span><span class="token punctuation">:</span>
-		<span class="token keyword">return</span>  self<span class="token punctuation">.</span>network<span class="token punctuation">(</span>xb<span class="token punctuation">)</span>
+	<span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> xb<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>network<span class="token punctuation">(</span>xb<span class="token punctuation">)</span>
 </code></pre>
 <ul>
 <li>Architecture:
@@ -272,8 +276,8 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <h4 id="alexnet">AlexNet</h4>
 <p>AlexNet is a seminal convolutional neural network (CNN) architecture designed for image classification tasks. It won the ImageNet Large Scale Visual Recognition Challenge (ILSVRC) in 2012, which significantly advanced the field of deep learning.</p>
 <p>Python Implementation:</p>
-<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">AlexNet</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> num_classes<span class="token operator">=</span><span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span> <span class="token class-name">AlexNet</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> num_classes<span class="token operator">=</span><span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 		<span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>features  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
 			nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">11</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
@@ -301,12 +305,12 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 			nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">4096</span><span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span><span class="token punctuation">,</span>
 		<span class="token punctuation">)</span> 
 
-	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>features<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>avgpool<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  torch<span class="token punctuation">.</span>flatten<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>classifier<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
-		<span class="token keyword">return</span>  x
+		<span class="token keyword">return</span> x
 </code></pre>
 <ul>
 <li>Architecture:
@@ -345,9 +349,10 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <p>ResNet, short for Residual Network, is a deep convolutional neural network architecture that revolutionized image classification tasks. ResNet addresses the vanishing gradient problem in very deep neural networks by introducing skip connections or shortcuts that bypass one or more layers. These skip connections enable the gradient to flow directly through the network, allowing for the training of extremely deep networks (up to hundreds of layers) without suffering from degradation in performance.</p>
 <p>Visual for skip connections:<br>
 <img src="https://lh7-us.googleusercontent.com/alYUFDNruN3AzJEh5RIpwCtLaIRHkFqzinuwcdseYLIDjcldcUyQlZRPmxZeW77IpzFruZz-Amj4TpgIoY_tmUamGviIaDe9xC6eTvb1pPFW9wLxgEITal5S1hEhcDTtTxjvaKH4qOhcq0JhoQC3QmO0=s2048" alt="" width="150"></p>
+<p>With the skip connection, the output changes from <span class="katex--inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mi>w</mi><mi>x</mi><mo>+</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(x) = f(wx +b)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.277778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.277778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.02691em;">w</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right: 0.222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.222222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span></span></span> to <span class="katex--inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>+</mo><mi>x</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">h(x) = f(x) + x.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.277778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.277778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.222222em;"></span></span><span class="base"><span class="strut" style="height: 0.43056em; vertical-align: 0em;"></span><span class="mord mathnormal">x</span><span class="mord">.</span></span></span></span></span> These skip connections help as they allow an alternate shortcut path for the gradients to flow through.</p>
 <p>Python Implementation:</p>
-<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ResidualBlock</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> in_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> downsample<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span> <span class="token class-name">ResidualBlock</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> in_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> downsample<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 		<span class="token builtin">super</span><span class="token punctuation">(</span>ResidualBlock<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>conv1  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>
 			in_channels<span class="token punctuation">,</span>
@@ -365,23 +370,23 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 		self<span class="token punctuation">.</span>bn2  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>BatchNorm2d<span class="token punctuation">(</span>out_channels<span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>downsample  <span class="token operator">=</span>  downsample
 
-	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		residual  <span class="token operator">=</span>  x
 		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>conv1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>bn1<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
 		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
 		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>conv2<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
 		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>bn2<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
-		<span class="token keyword">if</span>  self<span class="token punctuation">.</span>downsample<span class="token punctuation">:</span>
-		residual  <span class="token operator">=</span>  self<span class="token punctuation">.</span>downsample<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+		<span class="token keyword">if</span> self<span class="token punctuation">.</span>downsample<span class="token punctuation">:</span>
+			residual  <span class="token operator">=</span>  self<span class="token punctuation">.</span>downsample<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		out  <span class="token operator">+=</span>  residual
 		out  <span class="token operator">=</span>  self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>out<span class="token punctuation">)</span>
-		<span class="token keyword">return</span>  out
+		<span class="token keyword">return</span> out
 </code></pre>
 <p>This class defines a single residual block in a ResNet architecture. Residual blocks are central to ResNet’s success in training very deep neural networks. Each residual block consists of two convolutional layers with batch normalization and ReLU activation functions, along with a shortcut connection that skips one or more layers.</p>
 <p>The skip connection happens within the <code>forward</code> method of the <code>ResidualBlock</code> class, specifically after the second convolution operation and before the final ReLU activation. It involves adding the original input tensor to the output of the second convolution operation, providing a shortcut path for the gradient during training and facilitating the learning process in deep neural networks.</p>
-<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span>  <span class="token class-name">ResNet34</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	<span class="token keyword">def</span>  <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> num_classes<span class="token operator">=</span><span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">class</span> <span class="token class-name">ResNet34</span><span class="token punctuation">(</span>ImageClassificationBase<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> num_classes<span class="token operator">=</span><span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 		<span class="token builtin">super</span><span class="token punctuation">(</span>ResNet34<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>in_channels  <span class="token operator">=</span>  <span class="token number">64</span>
 		self<span class="token punctuation">.</span>conv1  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> kernel_size<span class="token operator">=</span><span class="token number">7</span><span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">,</span> bias<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
@@ -396,7 +401,7 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 		self<span class="token punctuation">.</span>avgpool  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>AdaptiveAvgPool2d<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>fc  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">512</span><span class="token punctuation">,</span> num_classes<span class="token punctuation">)</span>
 
-	<span class="token keyword">def</span>  <span class="token function">make_layer</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> block<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> num_blocks<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">make_layer</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> block<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> num_blocks<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 		downsample  <span class="token operator">=</span>  <span class="token boolean">None</span>
 		<span class="token keyword">if</span> <span class="token punctuation">(</span>stride  <span class="token operator">!=</span>  <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">or</span> <span class="token punctuation">(</span>self<span class="token punctuation">.</span>in_channels  <span class="token operator">!=</span>  out_channels<span class="token punctuation">)</span><span class="token punctuation">:</span>
 			downsample  <span class="token operator">=</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span>
@@ -409,14 +414,14 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 				<span class="token punctuation">)</span><span class="token punctuation">,</span>
 				nn<span class="token punctuation">.</span>BatchNorm2d<span class="token punctuation">(</span>out_channels<span class="token punctuation">)</span><span class="token punctuation">,</span>
 			<span class="token punctuation">)</span>
-		layers  <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+		layers <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
 		layers<span class="token punctuation">.</span>append<span class="token punctuation">(</span>block<span class="token punctuation">(</span>self<span class="token punctuation">.</span>in_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> stride<span class="token punctuation">,</span> downsample<span class="token punctuation">)</span><span class="token punctuation">)</span>
 		self<span class="token punctuation">.</span>in_channels  <span class="token operator">=</span>  out_channels
-		<span class="token keyword">for</span>  _  <span class="token keyword">in</span>  <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> num_blocks<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">for</span> _ <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> num_blocks<span class="token punctuation">)</span><span class="token punctuation">:</span>
 			layers<span class="token punctuation">.</span>append<span class="token punctuation">(</span>block<span class="token punctuation">(</span>out_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">)</span><span class="token punctuation">)</span>
-		<span class="token keyword">return</span>  nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span><span class="token operator">*</span>layers<span class="token punctuation">)</span>
+		<span class="token keyword">return</span> nn<span class="token punctuation">.</span>Sequential<span class="token punctuation">(</span><span class="token operator">*</span>layers<span class="token punctuation">)</span>
 
-	<span class="token keyword">def</span>  <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>conv1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>bn1<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
@@ -428,7 +433,7 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>avgpool<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  x<span class="token punctuation">.</span>view<span class="token punctuation">(</span>x<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
 		x  <span class="token operator">=</span>  self<span class="token punctuation">.</span>fc<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
-		<span class="token keyword">return</span>  x
+		<span class="token keyword">return</span> x
 </code></pre>
 <p>This class defines the ResNet34 model, which is a specific instance of the ResNet architecture with 34 layers. It consists of multiple residual layers (<code>layer1</code> to <code>layer4</code>) and additional layers for input processing and output prediction.</p>
 <ul>
@@ -466,6 +471,35 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <img src="https://lh7-us.googleusercontent.com/96YEnUF5bocapdIWJomMH87YTZTtRzkdzOjHNqELSxY_jhXMX5uTdSvSAucj91rxQlMFMJaK6j9ogPQF0w8F4F7keBoC4_c6lc_dxaCqnUIMIv7h0hdBZh_pbgiieyjxvn15hiOKR0CphY_1SFm4OGSy=s2048" alt="" width="900">
 </center><h3 id="application-and-validation-procedure">Application and Validation Procedure</h3>
 <p>The models are trained using the training dataset and evaluated using the validation dataset. Training progress is monitored using metrics such as loss and accuracy. Hyperparameters are tuned through grid search to optimize model performance.</p>
+<p>Python Implementation for evaluation and training function:</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token comment"># Evaluation function</span>
+@torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">evaluate</span><span class="token punctuation">(</span>model<span class="token punctuation">,</span> val_loader<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	model<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	outputs <span class="token operator">=</span> <span class="token punctuation">[</span>model<span class="token punctuation">.</span>validation_step<span class="token punctuation">(</span>batch<span class="token punctuation">)</span> <span class="token keyword">for</span>  batch  <span class="token keyword">in</span>  val_loader<span class="token punctuation">]</span>
+	<span class="token keyword">return</span> model<span class="token punctuation">.</span>validation_epoch_end<span class="token punctuation">(</span>outputs<span class="token punctuation">)</span>
+
+<span class="token comment"># Training function</span>
+<span class="token keyword">def</span> <span class="token function">fit</span><span class="token punctuation">(</span>epochs<span class="token punctuation">,</span> lr<span class="token punctuation">,</span> model<span class="token punctuation">,</span> train_loader<span class="token punctuation">,</span> val_loader<span class="token punctuation">,</span> opt_func<span class="token operator">=</span>torch<span class="token punctuation">.</span>optim<span class="token punctuation">.</span>SGD<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	history <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+	optimizer  <span class="token operator">=</span>  opt_func<span class="token punctuation">(</span>model<span class="token punctuation">.</span>parameters<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> lr<span class="token punctuation">)</span>
+		<span class="token keyword">for</span> epoch <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>epochs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token comment"># Training Phase</span>
+		model<span class="token punctuation">.</span>train<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		train_losses <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+			<span class="token keyword">for</span> batch <span class="token keyword">in</span> tqdm<span class="token punctuation">(</span>train_loader<span class="token punctuation">)</span><span class="token punctuation">:</span>
+				loss  <span class="token operator">=</span>  model<span class="token punctuation">.</span>training_step<span class="token punctuation">(</span>batch<span class="token punctuation">)</span>
+				train_losses<span class="token punctuation">.</span>append<span class="token punctuation">(</span>loss<span class="token punctuation">)</span>
+				loss<span class="token punctuation">.</span>backward<span class="token punctuation">(</span><span class="token punctuation">)</span>
+				optimizer<span class="token punctuation">.</span>step<span class="token punctuation">(</span><span class="token punctuation">)</span>
+				optimizer<span class="token punctuation">.</span>zero_grad<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token comment"># Validation phase</span>
+		result  <span class="token operator">=</span>  evaluate<span class="token punctuation">(</span>model<span class="token punctuation">,</span> val_loader<span class="token punctuation">)</span>
+		result<span class="token punctuation">[</span><span class="token string">"train_loss"</span><span class="token punctuation">]</span> <span class="token operator">=</span> torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>train_losses<span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		model<span class="token punctuation">.</span>epoch_end<span class="token punctuation">(</span>epoch<span class="token punctuation">,</span> result<span class="token punctuation">)</span>
+		history<span class="token punctuation">.</span>append<span class="token punctuation">(</span>result<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> history
+</code></pre>
 <p><strong>DNN, CNN, AlexNet, ResNet:</strong></p>
 <h4 id="training-procedure">Training Procedure:</h4>
 <ul>
@@ -497,6 +531,7 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <p><strong>CNN:</strong> Extra Hyperparameter: Number of convolutional layers (1 to 6)</p>
 <p>Hyperparameters were kept to a minimum for both the AlexNet model and the ResNet model to maintain strucutural similarity to the originals.</p>
 <h2 id="discussion-and-inferences">Discussion and Inferences</h2>
+<p>In this section, we will analyze the performance of different neural network models including DNN, CNN, AlexNet, and ResNet34. We’ll discuss their validation accuracy, loss trends across epochs, potential overfitting issues, and suggestions for optimization and improvement. Let’s delve into each model’s performance to glean insights and draw conclusions.</p>
 <h3 id="model-performance">Model Performance</h3>
 <ul>
 <li><strong>DNN</strong>:
@@ -556,7 +591,32 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 </ul>
 <center>
 <img src="https://lh7-us.googleusercontent.com/uDCQBWxOm3zrXckN0RKyqOpTutz_GcZTPTKFp4SmawLorBTLImMZKAdI4CnVqTSN5u-qMzP64pMlGKueqtZALV4wIGF_4v9hfxUXHEmvGxO98KrCUPchAP8FcQepy1K-RI12_EpNP_unLEvZn2tqpsLE=s2048" alt="" width="450"><img src="https://lh7-us.googleusercontent.com/9jMyV0Q0J2B2quytuW5DAWLr0O9XoKJbJ6lY80afrgD1D8k4h-4hfI3lW7NWiFdFHA_td_tRHV7SJebRsojFKeUiL3TmV6Q1XeSax_8dZHbQvosy3pjMoTlthamtujQw4DCvnkBSPkrcpQlOVCGAq2IY=s2048" alt="" width="450">
-</center><h3 id="performance-comparison">Performance Comparison</h3>
+</center><p>Code to generate graphs:</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token comment"># Plotting results</span>
+<span class="token keyword">def</span> <span class="token function">plot_accuracies</span><span class="token punctuation">(</span>history<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	accuracies  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">[</span><span class="token string">"val_acc"</span><span class="token punctuation">]</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  history<span class="token punctuation">]</span>
+	plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>accuracies<span class="token punctuation">,</span> <span class="token string">"-x"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">"epoch"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">"accuracy"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"Accuracy vs. No. of epochs"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">plot_losses</span><span class="token punctuation">(</span>history<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	train_losses  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"train_loss"</span><span class="token punctuation">)</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  history<span class="token punctuation">]</span>
+	val_losses  <span class="token operator">=</span> <span class="token punctuation">[</span>x<span class="token punctuation">[</span><span class="token string">"val_loss"</span><span class="token punctuation">]</span> <span class="token keyword">for</span>  x  <span class="token keyword">in</span>  history<span class="token punctuation">]</span>
+	plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>train_losses<span class="token punctuation">,</span> <span class="token string">"-bx"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>val_losses<span class="token punctuation">,</span> <span class="token string">"-rx"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">"epoch"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">"loss"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>legend<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"Training"</span><span class="token punctuation">,</span> <span class="token string">"Validation"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"Loss vs. No. of epochs"</span><span class="token punctuation">)</span>
+	plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+plot_accuracies<span class="token punctuation">(</span>history<span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plot_losses<span class="token punctuation">(</span>history<span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<h3 id="performance-comparison">Performance Comparison</h3>
 
 <table>
 <thead>
@@ -616,7 +676,7 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <p>Real-time predictions are a crucial aspect of any practical application involving machine learning models, especially for tasks like American Sign Language (ASL) recognition, where timely responses are essential for effective communication. In this section, we discuss the methodology and implementation details for achieving real-time predictions using a pre-trained deep learning model for ASL recognition.</p>
 <p>Python Implementation:</p>
 <pre class=" language-python"><code class="prism  language-python"><span class="token comment"># Model Structures Above</span>
-<span class="token keyword">def</span>  <span class="token function">choose_model</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="token keyword">def</span> <span class="token function">choose_model</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Choose a model type:"</span><span class="token punctuation">)</span>
 	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"1. CNN"</span><span class="token punctuation">)</span>
 	<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"2. DNN"</span><span class="token punctuation">)</span>
@@ -628,14 +688,14 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 	model_type  <span class="token operator">=</span>  model_types<span class="token punctuation">.</span>get<span class="token punctuation">(</span>choice_type<span class="token punctuation">,</span> <span class="token string">"CNN"</span><span class="token punctuation">)</span>
 	model_file  <span class="token operator">=</span>  f<span class="token string">"{model_type}.pth"</span>
 	
-	<span class="token keyword">if</span>  <span class="token operator">not</span>  os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>exists<span class="token punctuation">(</span>model_file<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">if</span> <span class="token operator">not</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>exists<span class="token punctuation">(</span>model_file<span class="token punctuation">)</span><span class="token punctuation">:</span>
 		<span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">"Error: {model_file} does not exist."</span><span class="token punctuation">)</span>
 		<span class="token keyword">return</span>  <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token boolean">None</span>
-	<span class="token keyword">return</span>  model_file<span class="token punctuation">,</span> model_type
+	<span class="token keyword">return</span> model_file<span class="token punctuation">,</span> model_type
 
-<span class="token keyword">def</span>  <span class="token function">choose_transforms</span><span class="token punctuation">(</span>model_type<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	<span class="token keyword">if</span>  model_type  <span class="token operator">==</span>  <span class="token string">"AlexNet"</span><span class="token punctuation">:</span>
-		<span class="token keyword">return</span>  transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+<span class="token keyword">def</span> <span class="token function">choose_transforms</span><span class="token punctuation">(</span>model_type<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">if</span> model_type  <span class="token operator">==</span>  <span class="token string">"AlexNet"</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
 			<span class="token punctuation">[</span>
 				transforms<span class="token punctuation">.</span>RandomHorizontalFlip<span class="token punctuation">(</span>p<span class="token operator">=</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
 				transforms<span class="token punctuation">.</span>RandomRotation<span class="token punctuation">(</span>degrees<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
@@ -645,8 +705,8 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 				transforms<span class="token punctuation">.</span>Normalize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
 			<span class="token punctuation">]</span>
 		<span class="token punctuation">)</span>
-	<span class="token keyword">if</span>  model_type  <span class="token operator">==</span>  <span class="token string">"ResNet34"</span><span class="token punctuation">:</span>
-		<span class="token keyword">return</span>  transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+	<span class="token keyword">if</span> model_type  <span class="token operator">==</span>  <span class="token string">"ResNet34"</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
 			<span class="token punctuation">[</span>
 				transforms<span class="token punctuation">.</span>RandomHorizontalFlip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
 				transforms<span class="token punctuation">.</span>RandomRotation<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
@@ -656,7 +716,7 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 			<span class="token punctuation">]</span>
 		<span class="token punctuation">)</span>
 	<span class="token keyword">else</span><span class="token punctuation">:</span>
-		<span class="token keyword">return</span>  transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
+		<span class="token keyword">return</span> transforms<span class="token punctuation">.</span>Compose<span class="token punctuation">(</span>
 			<span class="token punctuation">[</span>
 				transforms<span class="token punctuation">.</span>Resize<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">,</span> <span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
 				transforms<span class="token punctuation">.</span>ToTensor<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
@@ -667,7 +727,7 @@ train_ds<span class="token punctuation">,</span> val_ds<span class="token punctu
 <span class="token comment"># Load the model</span>
 model_file<span class="token punctuation">,</span> model_type  <span class="token operator">=</span>  choose_model<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-<span class="token keyword">if</span>  model_file  <span class="token operator">and</span>  model_type<span class="token punctuation">:</span>
+<span class="token keyword">if</span> model_file <span class="token operator">and</span> model_type<span class="token punctuation">:</span>
 	model_cls  <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"CNN"</span><span class="token punctuation">:</span> CNN<span class="token punctuation">,</span> <span class="token string">"DNN"</span><span class="token punctuation">:</span> DNN<span class="token punctuation">,</span> <span class="token string">"AlexNet"</span><span class="token punctuation">:</span> AlexNet<span class="token punctuation">,</span> <span class="token string">"ResNet34"</span><span class="token punctuation">:</span> ResNet34<span class="token punctuation">}</span><span class="token punctuation">[</span>model_type<span class="token punctuation">]</span> 
 	model  <span class="token operator">=</span>  model_cls<span class="token punctuation">(</span><span class="token punctuation">)</span>
 	model<span class="token punctuation">.</span>load_state_dict<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>load<span class="token punctuation">(</span>m	odel_file<span class="token punctuation">,</span> map_location<span class="token operator">=</span>device<span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -675,22 +735,22 @@ model_file<span class="token punctuation">,</span> model_type  <span class="toke
 	model<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 	
 	<span class="token comment"># Define the transform</span>
-	transform  <span class="token operator">=</span>  	choose_transforms<span class="token punctuation">(</span>model_type<span class="token punctuation">)</span>
+	transform  <span class="token operator">=</span>  choose_transforms<span class="token punctuation">(</span>model_type<span class="token punctuation">)</span>
 	<span class="token comment"># Initialize camera</span>
 	cap  <span class="token operator">=</span>  cv2<span class="token punctuation">.</span>VideoCapture<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
 	<span class="token comment"># List of 29 possible classes</span>
-	alphabet  <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"A"</span><span class="token punctuation">,</span><span class="token string">"B"</span><span class="token punctuation">,</span><span class="token string">"C"</span><span class="token punctuation">,</span><span class="token string">"D"</span><span class="token punctuation">,</span><span class="token string">"del"</span><span class="token punctuation">,</span><span class="token string">"E"</span><span class="token punctuation">,</span><span class="token string">"F"</span><span class="token punctuation">,</span><span class="token string">"G"</span><span class="token punctuation">,</span><span class="token string">"H"</span><span class="token punctuation">,</span><span class="token string">"I"</span><span class="token punctuation">,</span><span class="token string">"J"</span><span class="token punctuation">,</span>
+	alphabet <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"A"</span><span class="token punctuation">,</span><span class="token string">"B"</span><span class="token punctuation">,</span><span class="token string">"C"</span><span class="token punctuation">,</span><span class="token string">"D"</span><span class="token punctuation">,</span><span class="token string">"del"</span><span class="token punctuation">,</span><span class="token string">"E"</span><span class="token punctuation">,</span><span class="token string">"F"</span><span class="token punctuation">,</span><span class="token string">"G"</span><span class="token punctuation">,</span><span class="token string">"H"</span><span class="token punctuation">,</span><span class="token string">"I"</span><span class="token punctuation">,</span><span class="token string">"J"</span><span class="token punctuation">,</span>
 				<span class="token string">"K"</span><span class="token punctuation">,</span><span class="token string">"L"</span><span class="token punctuation">,</span><span class="token string">"M"</span><span class="token punctuation">,</span><span class="token string">"N"</span><span class="token punctuation">,</span><span class="token string">"nothing"</span><span class="token punctuation">,</span><span class="token string">"O"</span><span class="token punctuation">,</span><span class="token string">"P"</span><span class="token punctuation">,</span><span class="token string">"Q"</span><span class="token punctuation">,</span><span class="token string">"R"</span><span class="token punctuation">,</span><span class="token string">"S"</span><span class="token punctuation">,</span>
 				<span class="token string">"space"</span><span class="token punctuation">,</span><span class="token string">"T"</span><span class="token punctuation">,</span><span class="token string">"U"</span><span class="token punctuation">,</span><span class="token string">"V"</span><span class="token punctuation">,</span><span class="token string">"W"</span><span class="token punctuation">,</span><span class="token string">"X"</span><span class="token punctuation">,</span><span class="token string">"Y"</span><span class="token punctuation">,</span><span class="token string">"Z"</span><span class="token punctuation">,</span><span class="token punctuation">]</span>
 
-	<span class="token keyword">while</span>  <span class="token boolean">True</span><span class="token punctuation">:</span>
+	<span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
 		ret<span class="token punctuation">,</span> frame  <span class="token operator">=</span>  cap<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
 		<span class="token comment"># Convert numpy array to PIL image</span>
 		pil_image  <span class="token operator">=</span>  Image<span class="token punctuation">.</span>fromarray<span class="token punctuation">(</span>frame<span class="token punctuation">)</span>
 		<span class="token comment"># Apply the transform</span>
 		input_tensor  <span class="token operator">=</span>  transform<span class="token punctuation">(</span>pil_image<span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token punctuation">)</span>
 		<span class="token comment"># Make prediction</span>
-		<span class="token keyword">with</span>  torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">with</span> torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 			outputs  <span class="token operator">=</span>  model<span class="token punctuation">(</span>input_tensor<span class="token punctuation">)</span>
 			_<span class="token punctuation">,</span> predicted  <span class="token operator">=</span>  torch<span class="token punctuation">.</span><span class="token builtin">max</span><span class="token punctuation">(</span>outputs<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
 		<span class="token comment"># Get the predicted letter</span>
@@ -711,7 +771,7 @@ model_file<span class="token punctuation">,</span> model_type  <span class="toke
 		cv2<span class="token punctuation">.</span>imshow<span class="token punctuation">(</span><span class="token string">"ASL Prediction"</span><span class="token punctuation">,</span> frame<span class="token punctuation">)</span>
 		
 		<span class="token comment"># Break the loop if 'q' is pressed</span>
-		<span class="token keyword">if</span>  cv2<span class="token punctuation">.</span>waitKey<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>  <span class="token number">0xFF</span>  <span class="token operator">==</span>  <span class="token builtin">ord</span><span class="token punctuation">(</span><span class="token string">"q"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">if</span> cv2<span class="token punctuation">.</span>waitKey<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token number">0xFF</span>  <span class="token operator">==</span>  <span class="token builtin">ord</span><span class="token punctuation">(</span><span class="token string">"q"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
 			<span class="token keyword">break</span>
 			
 	<span class="token comment"># Release the camera and close all OpenCV windows</span>
