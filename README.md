@@ -25,5 +25,5 @@ College of William & Mary, 2024
 
 - Full research paper (PDF)
 - Source code for implemented neural network models
-- Trained Model Paths
+- Trained Model Checkpoints
 - Real-time prediction implementation
