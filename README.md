@@ -23,7 +23,6 @@ College of William & Mary, 2024
 
 ## Repository Contents
 
-- Full research paper (PDF)
 - Source code for implemented neural network models
 - Trained Model Checkpoints
 - Real-time prediction implementation
